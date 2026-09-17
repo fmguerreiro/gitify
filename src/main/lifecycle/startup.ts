@@ -35,14 +35,20 @@ export function initializeAppLifecycle(
 }
 
 /**
- * Handle a gitify:// protocol URL by forwarding it to the renderer process
- * as an AUTH_CALLBACK event.
+ * Handle a gitify:// protocol URL: `gitify://open` toggles the popup, for a
+ * status bar that cannot click a hidden tray icon; the rest are OAuth callbacks.
  *
  * @param mb - The menubar instance to forward the event through.
  * @param url - The protocol URL to handle.
  * @param protocol - The custom protocol string to match.
  */
 export function handleProtocolURL(mb: Menubar, url: string, protocol: string): void {
+  if (url === `${protocol}://open`) {
+    logInfo('main:handleUrl', 'toggling the popup');
+    mb.toggleWindow();
+    return;
+  }
+
   if (url.startsWith(`${protocol}://`)) {
     logInfo('main:handleUrl', `forwarding URL ${url} to renderer process`);
     sendRendererEvent(mb, EVENTS.AUTH_CALLBACK, url);

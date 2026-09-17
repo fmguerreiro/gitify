@@ -32,6 +32,7 @@ function createMb() {
   return {
     on: vi.fn(),
     showWindow: vi.fn(),
+    toggleWindow: vi.fn(),
     setContextMenu: vi.fn(),
     app: { setAppUserModelId: vi.fn(), quit: vi.fn() },
     tray: {
@@ -87,6 +88,13 @@ describe('main/lifecycle/startup.ts', () => {
     it('ignores URLs that do not match the protocol', () => {
       const mb = createMb();
       handleProtocolURL(mb as unknown as Menubar, 'https://github.com', 'gitify');
+      expect(sendRendererEventMock).not.toHaveBeenCalled();
+    });
+
+    it('toggles the popup for the open URL instead of treating it as a callback', () => {
+      const mb = createMb();
+      handleProtocolURL(mb as unknown as Menubar, 'gitify://open', 'gitify');
+      expect(mb.toggleWindow).toHaveBeenCalled();
       expect(sendRendererEventMock).not.toHaveBeenCalled();
     });
   });
