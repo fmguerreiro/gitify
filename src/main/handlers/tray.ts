@@ -2,6 +2,7 @@ import type { Menubar } from 'electron-menubar';
 
 import { EVENTS, type ITrayColorUpdate } from '../../shared/events';
 
+import { publishCount } from '../count';
 import { onMainEvent } from '../events';
 import { TrayIcons } from '../icons';
 
@@ -56,6 +57,8 @@ export function registerTrayHandlers(mb: Menubar): void {
    * Update the tray icon based on the current notification count.
    */
   onMainEvent(EVENTS.UPDATE_ICON_COLOR, (_, { notificationsCount, isOnline }: ITrayColorUpdate) => {
+    publishCount(isOnline ? notificationsCount : -1);
+
     if (!mb.tray.isDestroyed()) {
       if (!isOnline) {
         setOfflineIcon(mb);
