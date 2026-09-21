@@ -621,8 +621,10 @@ export const useNotifications = ({
   const markNotificationsAsRead = useCallback(
     async (readNotifications: GitifyNotification[]) => {
       try {
-        await markNotificationsAsReadMutation.mutateAsync({ readNotifications });
-        return true;
+        const { failed } = await markNotificationsAsReadMutation.mutateAsync({
+          readNotifications,
+        });
+        return failed.length === 0;
       } catch {
         return false;
       }
@@ -633,8 +635,10 @@ export const useNotifications = ({
   const markNotificationsAsDone = useCallback(
     async (doneNotifications: GitifyNotification[]) => {
       try {
-        await markNotificationsAsDoneMutation.mutateAsync({ doneNotifications });
-        return true;
+        const { failed } = await markNotificationsAsDoneMutation.mutateAsync({
+          doneNotifications,
+        });
+        return failed.length === 0;
       } catch {
         return false;
       }
@@ -645,8 +649,8 @@ export const useNotifications = ({
   const unsubscribeNotification = useCallback(
     async (notification: GitifyNotification) => {
       try {
-        await unsubscribeNotificationMutation.mutateAsync({ notification });
-        return true;
+        const { failed } = await unsubscribeNotificationMutation.mutateAsync({ notification });
+        return failed.length === 0;
       } catch {
         return false;
       }
